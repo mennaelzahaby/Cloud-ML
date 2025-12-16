@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: model-serving
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: model-serving
+  template:
+    metadata:
+      labels:
+        app: model-serving
+    spec:
+      containers:
+      - name: model-serving
+        image: model-serving:latest
+        imagePullPolicy: Never
+        ports:
+        - containerPort: 8000
+        volumeMounts:
+        - name: model-volume
+          mountPath: /app/models   # 👈 مهم جدًا
+      volumes:
+      - name: model-volume
+        persistentVolumeClaim:
+          claimName: ml-models-pvc
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: model-serving
+spec:
+  selector:
+    app: model-serving
+  ports:
+  - port: 8000
+    targetPort: 8000

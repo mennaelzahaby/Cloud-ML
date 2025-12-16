@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: check-model
+spec:
+  restartPolicy: Never
+  volumes:
+    - name: models
+      persistentVolumeClaim:
+        claimName: ml-models-pvc
+  containers:
+    - name: check
+      image: busybox
+      command: ["sh", "-c", "sleep 3600"]
+      volumeMounts:
+        - mountPath: /models
+          name: models
